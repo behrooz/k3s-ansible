@@ -1,0 +1,47 @@
+--- 
+
+- name: Download k3s installer
+  get_url:
+    url: "https://get.k3s.io"
+    dest: /tmp/install_k3s.sh
+    mode: '0755'
+
+- name: Run k3s installer
+  command: /tmp/install_k3s.sh - server --cluster-init
+  args:
+    creates: /usr/local/bin/k3s
+    
+  environment:
+    - K3S_KUBECONFIG_MODE: "{{ K3S_KUBECONFIG_MODE }}"
+    - INSTALL_K3S_VERSION: "{{ INSTALL_K3S_VERSION }}"
+    - INSTALL_K3S_EXEC: "{{ INSTALL_K3S_EXEC }}"
+
+- name: Create kube directory
+  file:
+    path:  $HOME/.kube
+    state: directory
+
+- name: Copy k3s config to usesr's home directory
+  copy:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: $HOME/.kube/config
+    remote_src: yes
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
+
+- name: Get k3s register token    
+  command: cat /var/lib/rancher/k3s/server/token
+  register: k3s_token_content
+
+- name: Master Ip address 
+  shell : hostname -I | awk '{print $1}'
+  register: result
+
+- name: Store token
+  set_fact:
+    k3s_token: "{{ k3s_token_content.stdout }}"
+    master_node_ip: "https://{{ result.stdout }}:6443"
+
+# - name: debug
+#   debug:
+#     var: k3s_token
