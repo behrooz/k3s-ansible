@@ -1,0 +1,11 @@
+[k3s_servers_master]
+master ansible_host=192.168.1.28 ansible_user=behrooz
+
+
+[k3s_servers_workers]
+worker-01 ansible_host=192.168.1.24 ansible_user=behrooz
+
+
+
+[teleport]
+master ansible_host=192.168.1.28 ansible_user=behrooz
