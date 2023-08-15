@@ -1,0 +1,11 @@
+- name: install k3s master
+  hosts: k3s_servers_master
+  become: yes
+  roles:
+    - master    
+
+- name: install k3s workers
+  hosts: k3s_servers_workers
+  become: yes
+  roles:    
+    - workers
