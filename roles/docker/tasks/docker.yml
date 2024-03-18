@@ -3,9 +3,18 @@
   debug:
     msg: "{{ packages }}"
 
-- name: downloading
+- name: Check if files exist
+  stat:
+    path: /home/behrooz/Downloads/dockerfiles/{{ item }}
+  loop: "{{ packages }}"
+  register: file_checks  
+
+- name: Download file if they don't exist
   get_url:
     url: "{{ package_path }}{{ item }}"
-    dest: /home/behrooz/Download/dockerfiles
+    dest: /home/behrooz/Downloads/dockerfiles/{{ item }}
     mode: '0755'
+    timeout: 300
   loop: "{{ packages }}"
+  when: not (file_checks.results[loop.index0].stat.exists | default(false))   
+  
