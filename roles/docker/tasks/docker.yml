@@ -1,0 +1,11 @@
+---
+- name: download docker files
+  debug:
+    msg: "{{ packages }}"
+
+- name: downloading
+  get_url:
+    url: "{{ package_path }}{{ item }}"
+    dest: /home/behrooz/Download/dockerfiles
+    mode: '0755'
+  loop: "{{ packages }}"

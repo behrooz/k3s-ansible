@@ -1,11 +1,17 @@
-- name: install k3s master
-  hosts: k3s_servers_master
+# - name: install k3s master
+#   hosts: k3s_servers_master
+#   become: yes
+#   roles:
+#     - master    
+
+# - name: install k3s workers
+#   hosts: k3s_servers_workers
+#   become: yes
+#   roles:    
+#     - workers
+
+- name: Get docker packages
+  hosts: online
   become: yes
   roles:
-    - master    
-
-- name: install k3s workers
-  hosts: k3s_servers_workers
-  become: yes
-  roles:    
-    - workers
+    - docker

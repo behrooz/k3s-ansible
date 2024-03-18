@@ -5,7 +5,8 @@ master ansible_host=192.168.1.28 ansible_user=behrooz
 [k3s_servers_workers]
 worker-01 ansible_host=192.168.1.24 ansible_user=behrooz
 
-
-
 [teleport]
 master ansible_host=192.168.1.28 ansible_user=behrooz
+
+[online]
+online ansible_host=192.168.1.10 ansible_user=behrooz ansible_sudo_pass=123
