@@ -1,0 +1,46 @@
+---
+
+- name: set local user in fatcs
+  set_fact: local_user="{{ ansible_env.USER }}"
+
+- name: Create download path localy
+  file:
+    path: /home/{{ ansible_env.USER }}/ansible_tmp/
+    state: directory
+    mode: '0775'
+    
+# # - name: Download file if they don't exist
+# #   become: no
+# #   delegate_to: localhost
+# #   get_url:
+# #     url: "{{ package_path }}{{ item }}"
+# #     dest: "{{ local_path }}{{ item }}"
+# #     mode: '0775'
+# #     timeout: 300
+# #   loop: "{{ packages }}"
+
+- name: install containerd
+  become: yes
+  apt:
+    deb: "/home/{{ ansible_env.USER }}/ansible_tmp/containerd.io_1.6.28-1_amd64.deb"
+
+- name: install docker ce cli
+  become: yes
+  apt:
+    deb: "/home/{{ ansible_env.USER }}/ansible_tmp/docker-ce-cli_25.0.4-1~debian.12~bookworm_amd64.deb"
+
+- name: install docker ce 
+  become: yes
+  apt:
+    deb: "/home/{{ ansible_env.USER }}/ansible_tmp/docker-ce_25.0.4-1~debian.12~bookworm_amd64.deb"
+
+- name: start docker service
+  systemd_service:
+    state: started
+    name: docker.service
+
+- name: pull docker registry
+  shell: docker pull registry:2
+
+- name: save registry image
+  shell: docker save -o /home/{{ hostvars['localhost']['local_user'] }}/ansible_tmp/registry.tar registry:2

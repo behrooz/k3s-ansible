@@ -1,0 +1,27 @@
+---
+
+- name: Copy files from local server to offline
+  copy:
+    src: /home/{{ hostvars['localhost']['local_user'] }}/ansible_tmp/
+    dest: /tmp/
+
+- name: Installing packages
+  apt: 
+    deb: "/tmp/{{ item }}"
+  loop: "{{ packages }}"
+
+- name: Copy registry image
+  copy:
+    src: /home/{{ hostvars['localhost']['local_user'] }}/ansible_tmp/registry.tar
+    dest: /tmp/  
+
+- name: start docker service
+  systemd_service:
+    state: started
+    name: docker.service
+
+- name: load docker registry image
+  shell: docker load -i /tmp/registry.tar
+
+- name: run docker registry image
+  shell: docker run -d -p 5000:5000 --restart=always --name registry registry:2 
