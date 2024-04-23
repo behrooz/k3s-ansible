@@ -11,7 +11,12 @@
 #     - workers
 
 - name: Get docker packages
-  hosts: online
+  hosts: local
+  roles:
+    - preparing
+
+- name: Installing packages
+  hosts: offline
   become: yes
   roles:
-    - docker
+    - installing 
